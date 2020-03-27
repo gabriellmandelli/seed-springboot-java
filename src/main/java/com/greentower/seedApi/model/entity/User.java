@@ -1,7 +1,6 @@
 package com.greentower.seedApi.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.greentower.seedApi.model.generic.BaseEntity;
+import com.greentower.seedApi.util.BaseEntity;
 import com.greentower.seedApi.model.enums.UserStatus;
 
 import javax.persistence.Column;
@@ -64,7 +63,6 @@ public class User extends BaseEntity {
         this.userName = userName;
     }
 
-    @JsonIgnore
     public String getPassword() {
         return password;
     }

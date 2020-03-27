@@ -1,4 +1,4 @@
-package com.greentower.seedApi.model.generic;
+package com.greentower.seedApi.util;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.Type;

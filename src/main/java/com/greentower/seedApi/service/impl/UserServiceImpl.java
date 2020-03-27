@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Informe um UserName válido.");
         }
 
-        if(user.getPassword() == null || user.getName().trim().equals("") ) {
+        if(user.getPassword() == null || user.getPassword().trim().equals("") ) {
             throw new ValidationException("Informe uma Senha válida.");
         }
 
@@ -98,10 +98,10 @@ public class UserServiceImpl implements UserService {
 
         userExist = new User();
         userExist.setEmail(user.getEmail());
+
         if (!find(userExist).isEmpty()){
             throw new ValidationException("Email informado já está sendo utilizado.");
         }
-
     }
 
     @Override
