@@ -1,0 +1,45 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.5.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'org.asciidoctor.convert' version '1.5.8'
+	id 'java'
+}
+
+group = 'com.greentower'
+version = '0.0.1'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+}
+
+bootJar {
+	launchScript()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web-services'
+	runtimeOnly 'org.postgresql:postgresql'
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    implementation 'org.jetbrains:annotations:15.0'
+}
+
+test {
+	outputs.dir snippetsDir
+	useJUnitPlatform()
+}
+
+asciidoctor {
+	inputs.dir snippetsDir
+	dependsOn test
+}
