@@ -1,6 +1,6 @@
 package com.greentower.seedApi.model.entity;
 
-import com.greentower.seedApi.util.BaseEntity;
+import com.greentower.seedApi.util.generic.BaseEntity;
 import com.greentower.seedApi.model.enums.UserStatus;
 
 import javax.persistence.Column;
@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Email
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "phone")

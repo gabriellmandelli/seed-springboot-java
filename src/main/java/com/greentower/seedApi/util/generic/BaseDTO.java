@@ -1,37 +1,17 @@
-package com.greentower.seedApi.util;
+package com.greentower.seedApi.util.generic;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-@MappedSuperclass
-public class BaseEntity {
+public class BaseDTO {
 
-    @Id
-    @Type(type="uuid-char")
-    @Column(unique = true)
     private UUID id;
-
-    @Column(name = "created_at")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdAt;
-
-    @Column(name = "updated_at")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updatedAt;
-
-    public BaseEntity() {
-        this.createdAt = new Date();
-    }
-
-    public BaseEntity(UUID id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 
     public UUID getId() {
         return id;
@@ -56,5 +36,4 @@ public class BaseEntity {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 }

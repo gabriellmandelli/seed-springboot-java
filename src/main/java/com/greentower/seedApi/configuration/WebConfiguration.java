@@ -22,7 +22,5 @@ public class WebConfiguration implements WebMvcConfigurer {
                                 String.valueOf(HttpMethod.PUT),
                                 String.valueOf(HttpMethod.DELETE),
                                 String.valueOf(HttpMethod.OPTIONS));
-
-
     }
 }

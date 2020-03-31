@@ -1,11 +1,11 @@
 package com.greentower.seedApi.service.impl;
 
-import com.greentower.seedApi.exception.ValidationException;
+import com.greentower.seedApi.util.exception.ValidationBadRequestException;
 import com.greentower.seedApi.model.entity.User;
 import com.greentower.seedApi.model.enums.UserStatus;
 import com.greentower.seedApi.model.repository.UserRepository;
 import com.greentower.seedApi.service.UserService;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
@@ -15,43 +15,40 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-@ComponentScan
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
+    @Autowired
     public UserServiceImpl(UserRepository userRepository){
-        super();
         this.userRepository = userRepository;
     }
 
     @Override
-    @Transactional
     public User save(User user) {
         isValid(user);
-        user.setStatus(UserStatus.ENABLED);
         user.setId(UUID.randomUUID());
+        user.setStatus(UserStatus.ENABLED);
         return userRepository.save(user);
     }
 
     @Override
-    public User update(User user) {
-        Objects.requireNonNull(user.getId());
-        isValid(user);
-        user.setUpdatedAt(new Date());
-        return userRepository.save(user);
+    public User update(UUID id, User user) {
+        return this.userRepository.findById(id)
+                .map(existing -> {
+                   user.setId(id);
+                   return this.userRepository.save(user);
+                }).orElseThrow();
     }
 
     @Override
-    public void delete(User user) {
-        Objects.requireNonNull(user.getId());
-        userRepository.delete(user);
+    public void delete(UUID userId) {
+        userRepository.deleteById(userId);
     }
 
     @Override
-    @Transactional
     public List<User> find(User userFiltered) {
-        Example example = Example.of( userFiltered,
+        Example example = Example.of(userFiltered,
                 ExampleMatcher.matching()
                         .withIgnoreCase()
                         .withStringMatcher(StringMatcher.CONTAINING) );
@@ -67,40 +64,51 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateStatus(User user, UserStatus userStatus) {
         user.setStatus(userStatus);
-        return update(user);
+        return this.update(user.getId(), user);
     }
 
     @Override
     public void isValid(User user) {
 
         if(user.getEmail() == null || user.getEmail().trim().equals("")) {
-            throw new ValidationException("Informe um Email válido.");
+            throw new ValidationBadRequestException("Informe um Email válido.");
         }
 
         if(user.getName() == null || user.getName().trim().equals("")) {
-            throw new ValidationException("Informe um Nome válida.");
+            throw new ValidationBadRequestException("Informe um Nome válida.");
         }
 
         if(user.getUserName() == null || user.getUserName().trim().equals("")) {
-            throw new ValidationException("Informe um UserName válido.");
+            throw new ValidationBadRequestException("Informe um UserName válido.");
         }
 
         if(user.getPassword() == null || user.getPassword().trim().equals("") ) {
-            throw new ValidationException("Informe uma Senha válida.");
+            throw new ValidationBadRequestException("Informe uma Senha válida.");
         }
 
-        User userExist = new User();
+        User userExist;
+        List<User> listUser;
+
+        userExist = new User();
         userExist.setUserName(user.getUserName());
 
-        if (!find(userExist).isEmpty()){
-            throw new ValidationException("Usuario informado já está sendo utilizado.");
+        listUser = this.find(userExist);
+
+        if (!listUser.isEmpty()){
+            if (listUser.stream().findFirst().get().getUserName().equals(user.getUserName())) {
+                throw new ValidationBadRequestException("Usuario informado já está sendo utilizado.");
+            }
         }
 
         userExist = new User();
         userExist.setEmail(user.getEmail());
 
-        if (!find(userExist).isEmpty()){
-            throw new ValidationException("Email informado já está sendo utilizado.");
+        listUser = this.find(userExist);
+
+        if (!listUser.isEmpty()){
+            if (listUser.stream().findFirst().get().getEmail().equals(user.getEmail())){
+                throw new ValidationBadRequestException("Email informado já está sendo utilizado.");
+            }
         }
     }
 

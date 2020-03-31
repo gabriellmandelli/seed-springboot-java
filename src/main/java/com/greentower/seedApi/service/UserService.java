@@ -11,9 +11,9 @@ public interface UserService {
 
     User save(User user);
 
-    User update(User user);
+    User update(UUID id, User user);
 
-    void delete(User user);
+    void delete(UUID userId);
 
     List<User> find(User userFiltered);
 

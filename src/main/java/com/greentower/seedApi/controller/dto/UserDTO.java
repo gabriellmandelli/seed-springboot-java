@@ -2,7 +2,7 @@ package com.greentower.seedApi.controller.dto;
 
 import com.greentower.seedApi.model.entity.User;
 import com.greentower.seedApi.model.enums.UserStatus;
-import com.greentower.seedApi.util.BaseDTO;
+import com.greentower.seedApi.util.generic.BaseDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class UserDTO extends BaseDTO {
 
     private String name;
+    private String userName;
     private String email;
     private String phone;
     private UserStatus status;
@@ -22,6 +23,7 @@ public class UserDTO extends BaseDTO {
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.status = user.getStatus();
+        this.userName = user.getUserName();
     }
 
     public static List<UserDTO> converter (List<User> userList){
@@ -58,5 +60,13 @@ public class UserDTO extends BaseDTO {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

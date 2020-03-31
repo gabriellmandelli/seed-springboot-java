@@ -13,7 +13,7 @@ import java.io.IOException;
 @Order(1)
 public class TransactionFilter implements Filter {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestResponseLoggingFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(TransactionFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
