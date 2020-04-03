@@ -1,11 +1,9 @@
 package com.greentower.seedApi.util.generic;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -17,23 +15,21 @@ import java.util.UUID;
 public class BaseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Type(type="pg-uuid")
     private UUID id;
 
-    @CreatedDate
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Column(nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @LastModifiedDate
     @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Column(nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
     public BaseEntity() {
-
     }
 
     public BaseEntity(UUID id, Date createdAt, Date updatedAt) {

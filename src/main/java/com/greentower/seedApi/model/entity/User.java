@@ -8,11 +8,14 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
 @Entity(name = "auth_user")
-public class User extends BaseEntity {
+public class User extends BaseEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "name")
     private String name;
