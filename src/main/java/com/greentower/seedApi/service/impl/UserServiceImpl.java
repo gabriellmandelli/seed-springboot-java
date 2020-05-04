@@ -1,6 +1,6 @@
 package com.greentower.seedApi.service.impl;
 
-import com.greentower.seedApi.util.exception.ValidationBadRequestException;
+import com.greentower.seedApi.util.exception.ResponseBadRequestException;
 import com.greentower.seedApi.model.entity.User;
 import com.greentower.seedApi.model.enums.UserStatus;
 import com.greentower.seedApi.model.repository.UserRepository;
@@ -12,6 +12,7 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.ws.Response;
 import java.util.*;
 
 @Service
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User save(User user) {
         isValid(user);
         user.setId(UUID.randomUUID());
@@ -34,11 +36,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(UUID id, User user) {
-        return this.userRepository.findById(id)
-                .map(existing -> {
-                   user.setId(id);
-                   return this.userRepository.save(user);
-                }).orElseThrow();
+
+        Optional<User> userOptional = this.userRepository.findById(id);
+
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        }else{
+            throw new ResponseBadRequestException("Usuario não existe.");
+        }
     }
 
     @Override
@@ -71,19 +76,19 @@ public class UserServiceImpl implements UserService {
     public void isValid(User user) {
 
         if(user.getEmail() == null || user.getEmail().trim().equals("")) {
-            throw new ValidationBadRequestException("Informe um Email válido.");
+            throw new ResponseBadRequestException("Informe um Email válido.");
         }
 
         if(user.getName() == null || user.getName().trim().equals("")) {
-            throw new ValidationBadRequestException("Informe um Nome válida.");
+            throw new ResponseBadRequestException("Informe um Nome válida.");
         }
 
         if(user.getUserName() == null || user.getUserName().trim().equals("")) {
-            throw new ValidationBadRequestException("Informe um UserName válido.");
+            throw new ResponseBadRequestException("Informe um UserName válido.");
         }
 
         if(user.getPassword() == null || user.getPassword().trim().equals("") ) {
-            throw new ValidationBadRequestException("Informe uma Senha válida.");
+            throw new ResponseBadRequestException("Informe uma Senha válida.");
         }
 
         User userExist;
@@ -96,7 +101,7 @@ public class UserServiceImpl implements UserService {
 
         if (!listUser.isEmpty()){
             if (listUser.stream().findFirst().get().getUserName().equals(user.getUserName())) {
-                throw new ValidationBadRequestException("Usuario informado já está sendo utilizado.");
+                throw new ResponseBadRequestException("Usuario informado já está sendo utilizado.");
             }
         }
 
@@ -107,13 +112,13 @@ public class UserServiceImpl implements UserService {
 
         if (!listUser.isEmpty()){
             if (listUser.stream().findFirst().get().getEmail().equals(user.getEmail())){
-                throw new ValidationBadRequestException("Email informado já está sendo utilizado.");
+                throw new ResponseBadRequestException("Email informado já está sendo utilizado.");
             }
         }
     }
 
     @Override
-    public Optional<User> findById(UUID id) {
-        return userRepository.findById(id);
+    public User findById(UUID id) {
+        return userRepository.findById(id).get();
     }
 }

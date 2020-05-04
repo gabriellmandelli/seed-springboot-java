@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-    @Query("SELECT u FROM auth_user u WHERE u.userName = :username and u.password = :password")
-    User findByLoginPassword(@Param("username") String login, @Param("password") String password);
+//    @Query("SELECT u FROM auth_user u WHERE u.username = :username and u.password = :password")
+//    User findByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 }

@@ -23,5 +23,5 @@ public interface UserService {
 
     void isValid(User user);
 
-    Optional<User> findById(UUID id);
+    User findById(UUID id);
 }

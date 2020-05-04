@@ -1,11 +1,11 @@
-package com.greentower.seedApi.controller;
+package com.greentower.seedApi.rest.controller;
 
-import com.greentower.seedApi.controller.dto.UserDTO;
+import com.greentower.seedApi.rest.dto.UserDTO;
 import com.greentower.seedApi.model.entity.User;
 
 import com.greentower.seedApi.service.UserService;
 
-import org.hibernate.service.spi.InjectService;
+import com.greentower.seedApi.util.exception.ResponseNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,30 +27,25 @@ public class UserController {
     }
 
     @GetMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity find(){
-        List<UserDTO> userDTOList = UserDTO.converter(userService.findAll());
-        return  ResponseEntity.ok(userDTOList);
+    public ResponseEntity<List<UserDTO>> find(){
+        return  ResponseEntity.ok(UserDTO.converter(userService.findAll()));
     }
 
     @GetMapping(value = "{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity findById(@PathVariable("userId")UUID userId) {
-        Optional<User> user = userService.findById(userId);
+    public UserDTO findById(@PathVariable("userId")UUID userId) {
+        User user = userService.findById(userId);
 
-        if (user.isEmpty()){
-            return ResponseEntity.ok(ResponseEntity.notFound().build());
-        }else{
-            return ResponseEntity.ok(new UserDTO(user.get()));
-        }
+        return new UserDTO(user);
     }
 
     @PostMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity save(@RequestBody User user){
-        return ResponseEntity.ok(new UserDTO(userService.save(user)));
+    public UserDTO save(@RequestBody User user){
+        return new UserDTO(userService.save(user));
     }
 
     @PutMapping(value = "{userId}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity update(@PathVariable("userId") UUID userId, @RequestBody User user) {
-        return ResponseEntity.ok(new UserDTO(userService.update(userId, user)));
+    public UserDTO update(@PathVariable("userId") UUID userId, @RequestBody User user) {
+        return new UserDTO(userService.update(userId, user));
     }
 
     @DeleteMapping(value = "{userId}")
